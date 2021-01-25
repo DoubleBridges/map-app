@@ -100415,6 +100415,10 @@ module['exports'] = faker;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
@@ -100428,18 +100432,126 @@ exports.User = void 0;
 
 var faker_1 = __importDefault(require("faker"));
 
-var User = function User() {
-  _classCallCheck(this, User);
+var User = /*#__PURE__*/function () {
+  function User() {
+    _classCallCheck(this, User);
 
-  this.name = faker_1.default.name.firstName();
-  this.location = {
-    lat: parseFloat(faker_1.default.address.latitude()),
-    lon: parseFloat(faker_1.default.address.longitude())
+    this.name = faker_1.default.name.firstName();
+    this.location = {
+      lat: parseFloat(faker_1.default.address.latitude()),
+      lon: parseFloat(faker_1.default.address.longitude())
+    };
+  }
+
+  _createClass(User, [{
+    key: "markerContent",
+    value: function markerContent() {
+      return "User Name: ".concat(this.name);
+    }
+  }]);
+
+  return User;
+}();
+
+exports.User = User;
+},{"faker":"node_modules/faker/index.js"}],"src/Company.ts":[function(require,module,exports) {
+"use strict";
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
   };
 };
 
-exports.User = User;
-},{"faker":"node_modules/faker/index.js"}],"src/index.ts":[function(require,module,exports) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Company = void 0;
+
+var faker_1 = __importDefault(require("faker"));
+
+var Company = /*#__PURE__*/function () {
+  function Company() {
+    _classCallCheck(this, Company);
+
+    this.companyName = faker_1.default.company.companyName();
+    this.companyPhrase = faker_1.default.company.catchPhrase();
+    this.location = {
+      lat: parseFloat(faker_1.default.address.latitude()),
+      lon: parseFloat(faker_1.default.address.longitude())
+    };
+  }
+
+  _createClass(Company, [{
+    key: "markerContent",
+    value: function markerContent() {
+      return "<div>\n              <h1>Company Name: ".concat(this.companyName, "<h1>\n              <h3>Company Catch Phrase: ").concat(this.companyPhrase, "<h3>\n            <div>");
+    }
+  }]);
+
+  return Company;
+}();
+
+exports.Company = Company;
+},{"faker":"node_modules/faker/index.js"}],"src/CustomMap.ts":[function(require,module,exports) {
+"use strict";
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CustomMap = void 0;
+
+var CustomMap = /*#__PURE__*/function () {
+  function CustomMap(id) {
+    _classCallCheck(this, CustomMap);
+
+    this.googleMap = new google.maps.Map(document.getElementById(id), {
+      zoom: 2,
+      center: {
+        lat: 0,
+        lng: 0
+      }
+    });
+  }
+
+  _createClass(CustomMap, [{
+    key: "addMarker",
+    value: function addMarker(mappable) {
+      var _this = this;
+
+      var marker = new google.maps.Marker({
+        map: this.googleMap,
+        position: {
+          lat: mappable.location.lat,
+          lng: mappable.location.lon
+        }
+      });
+      marker.addListener('click', function () {
+        var infoWindow = new google.maps.InfoWindow({
+          content: mappable.markerContent()
+        });
+        infoWindow.open(_this.googleMap, marker);
+      });
+    }
+  }]);
+
+  return CustomMap;
+}();
+
+exports.CustomMap = CustomMap;
+},{}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -100448,14 +100560,16 @@ Object.defineProperty(exports, "__esModule", {
 
 var User_1 = require("./User");
 
-var _User_1$User = new User_1.User(),
-    name = _User_1$User.name,
-    _User_1$User$location = _User_1$User.location,
-    lat = _User_1$User$location.lat,
-    lon = _User_1$User$location.lon;
+var Company_1 = require("./Company");
 
-console.log(name, lat, lon);
-},{"./User":"src/User.ts"}],"../../../.nvm/versions/node/v13.9.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var CustomMap_1 = require("./CustomMap");
+
+var user = new User_1.User();
+var company = new Company_1.Company();
+var map = new CustomMap_1.CustomMap('map');
+var userMarker = map.addMarker(user);
+var companyMarker = map.addMarker(company);
+},{"./User":"src/User.ts","./Company":"src/Company.ts","./CustomMap":"src/CustomMap.ts"}],"../../../.nvm/versions/node/v13.9.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
